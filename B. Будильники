@@ -1,0 +1,68 @@
+package main
+
+import (
+    "fmt"
+    "strconv"
+    "bufio"
+    "os"
+)
+
+func main() {
+  scanner := bufio.NewScanner(os.Stdin)
+	scanner.Split(bufio.ScanWords)
+
+	var n, x, k int
+
+	scanner.Scan()
+	n, _ = strconv.Atoi(scanner.Text())
+
+	scanner.Scan()
+	x, _ = strconv.Atoi(scanner.Text())
+
+	scanner.Scan()
+	k, _ = strconv.Atoi(scanner.Text())
+	
+    a := make([]int, n, n)
+    max_alarm_time := 0
+    
+    cut := make(map[int]int)
+    for i := 0; i < n; i++ {
+        scanner.Scan()
+		a[i], _ = strconv.Atoi(scanner.Text())
+        if a[i] > max_alarm_time {
+            max_alarm_time = a[i]
+        }
+        
+        c := a[i] % x
+        first, ok := cut[c]
+        if ok {
+            if a[i] < first {
+                cut[c] = a[i]
+            }
+        } else {
+            cut[c] = a[i]
+        }
+    }
+
+
+ 
+
+    l, r := 0, max_alarm_time + x*k
+
+
+    for l < r {
+        m := l + (r-l)/2
+        ttl := 0
+        for _, v := range cut {
+            if m >= v {
+                ttl += (m - v) / x + 1  // исправленная формула
+            }
+        }
+        if ttl >= k {
+            r = m
+        } else {
+            l = m + 1
+        }
+    }
+    fmt.Println(l)
+}
